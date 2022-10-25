@@ -2,17 +2,15 @@ package main
 
 import (
     "fmt"
+    "service-catatin/configs"
     "github.com/gin-gonic/gin"
 )
-
-// var db *gorm.DB = configs.DB
 
 func main() {
     router := gin.Default()
     
     //run database
-    // configs.ConnectDB()
-		// defer db.Close()
+    configs.ConnectDB()
 
     //routes
     
