@@ -15,6 +15,20 @@ import (
 
 var validate = validator.New()
 
+func Index() gin.HandlerFunc {
+    return func(c *gin.Context) {
+        db := configs.GetDB()
+        users := []models.User{}
+        err := db.Find(&users).Error
+
+        if err != nil {
+            c.JSON(http.StatusNotFound, gin.H{"code": http.StatusNotFound, "message": "Data not found", "data": err})
+            return
+        }
+        c.JSON(http.StatusOK, gin.H{"code": http.StatusOK, "message": "Success", "data": users})
+    }
+}
+
 func Show() gin.HandlerFunc {
     return func(c *gin.Context) {
         db := configs.GetDB()
