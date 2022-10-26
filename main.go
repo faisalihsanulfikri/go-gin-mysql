@@ -3,6 +3,7 @@ package main
 import (
     "fmt"
     "service-catatin/configs"
+    "service-catatin/routes"
     "github.com/gin-gonic/gin"
 )
 
@@ -12,8 +13,8 @@ func main() {
     //run database
     configs.ConnectDB()
 
-    //routes
-    
+    //routes    
+    routes.Api(router)
 
     fmt.Println("SEVICE CATATIN IS RUNNING")
     router.Run("localhost:6000")
