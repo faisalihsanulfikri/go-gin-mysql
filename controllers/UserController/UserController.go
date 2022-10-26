@@ -34,10 +34,30 @@ func Show() gin.HandlerFunc {
         db := configs.GetDB()
         userId := c.Param("userId")
         user := models.User{}
-        err := db.First(&user, userId).Error
+        result := db.First(&user, userId)
 
-        if err != nil {
+        if result.Error != nil {
             c.JSON(http.StatusNotFound, gin.H{"code": http.StatusNotFound, "message": "Data not found", "data": nil})
+            return
+        }
+        c.JSON(http.StatusOK, gin.H{"code": http.StatusOK, "message": "Success", "data": user})
+    }
+}
+
+func Store() gin.HandlerFunc {
+    return func(c *gin.Context) {
+        db := configs.GetDB()
+        user := models.User{}
+        
+        if err := c.BindJSON(&user); err != nil {
+            c.JSON(http.StatusBadRequest, gin.H{"code": http.StatusBadRequest, "message": "Invalid data", "data": nil})
+            return
+        }
+
+        result := db.Create(&user)
+
+        if result.Error != nil {
+            c.JSON(http.StatusBadRequest, gin.H{"code": http.StatusBadRequest, "message": "Unable to create data", "data": nil})
             return
         }
         c.JSON(http.StatusOK, gin.H{"code": http.StatusOK, "message": "Success", "data": user})
