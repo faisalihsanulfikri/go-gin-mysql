@@ -1,16 +1,12 @@
 package UserController
 
 import (
-    // "context"
-    // "fmt"
     "service-catatin/configs"
     "service-catatin/models"
     "net/http"
-    // "time"
     
     "github.com/gin-gonic/gin"
     "github.com/go-playground/validator/v10"
-    // "gorm.io/gorm"
 )
 
 var validate = validator.New()
@@ -84,7 +80,7 @@ func Update() gin.HandlerFunc {
             return
         }
 
-        result := db.Find(&user, userId)
+        result := db.First(&user, userId)
         if result.Error != nil {
             c.JSON(http.StatusNotFound, gin.H{"code": http.StatusNotFound, "message": "Data not found", "data": nil})
             return
@@ -97,6 +93,27 @@ func Update() gin.HandlerFunc {
 
         if result.Error != nil {
             c.JSON(http.StatusBadRequest, gin.H{"code": http.StatusBadRequest, "message": "Unable to update data", "data": nil})
+            return
+        }
+        c.JSON(http.StatusOK, gin.H{"code": http.StatusOK, "message": "Success", "data": user})
+    }
+}
+
+func Destroy() gin.HandlerFunc {
+    return func(c *gin.Context) {
+        db := configs.GetDB()
+        userId := c.Param("userId")
+        user := models.User{}
+
+        result := db.First(&user, userId)
+        if result.Error != nil {
+            c.JSON(http.StatusNotFound, gin.H{"code": http.StatusNotFound, "message": "Data not found", "data": nil})
+            return
+        }
+
+        result = db.Delete(&user)
+        if result.Error != nil {
+            c.JSON(http.StatusBadRequest, gin.H{"code": http.StatusBadRequest, "message": "Unable to delete data", "data": nil})
             return
         }
         c.JSON(http.StatusOK, gin.H{"code": http.StatusOK, "message": "Success", "data": user})
