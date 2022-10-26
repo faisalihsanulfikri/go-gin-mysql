@@ -10,17 +10,17 @@ import (
     
     "github.com/gin-gonic/gin"
     "github.com/go-playground/validator/v10"
-    "gorm.io/gorm"
+    // "gorm.io/gorm"
 )
 
-var db *gorm.DB = configs.GetDB()
 var validate = validator.New()
 
 func Show() gin.HandlerFunc {
     return func(c *gin.Context) {
+        db := configs.GetDB()
         userId := c.Param("userId")
         user := models.User{}
-        err := db.Select("users.*").First(&user, userId).Error
+        err := db.First(&user, userId).Error
 
         if err != nil {
             c.JSON(http.StatusNotFound, gin.H{"code": http.StatusNotFound, "message": "Data not found", "data": nil})
